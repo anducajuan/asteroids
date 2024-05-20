@@ -1,6 +1,7 @@
 import pygame
 import random
 import math
+from datetime import datetime, timedelta
 
 # Inicialização do Pygame
 pygame.init()
@@ -192,7 +193,7 @@ def create_asteroid():
     asteroids.add(asteroid)
 
 def restart_game():
-    global spaceship, asteroids_destroyed, spawn_timer
+    global spaceship, asteroids_destroyed, spawn_timer, last_shoot
     all_sprites.empty()
     asteroids.empty()
     bullets.empty()
@@ -205,6 +206,8 @@ def restart_game():
 
     asteroids_destroyed = 0
     spawn_timer = 0
+    last_shoot = datetime.now()
+    
 
 # Criação de asteroides iniciais
 for _ in range(5):
@@ -219,13 +222,14 @@ asteroids_destroyed = 0
 running = True
 clock = pygame.time.Clock()
 spawn_timer = 0
-
+last_shoot = datetime.now() 
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
+            if event.key == pygame.K_SPACE and (datetime.now() - last_shoot) > timedelta(milliseconds=500): #Verifica se Espaço foi apertado e se o último tiro foi há mais de meio segundo
+                last_shoot = datetime.now() #Reseta o tempo de contagem do último tiro
                 bullets_fired = spaceship.shoot()
                 for bullet in bullets_fired:
                     all_sprites.add(bullet)
