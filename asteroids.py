@@ -26,11 +26,11 @@ class Spaceship(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.Surface((30, 25), pygame.SRCALPHA)
-        pygame.draw.polygon(self.image, WHITE, [(5, 25), (15, 20), (25, 25), (15, 0)])
+        pygame.draw.polygon(self.image, WHITE, [(25, 15), (0, 25), (5, 15), (0, 5)])
         self.original_image = self.image
         self.rect = self.image.get_rect(center=(WIDTH // 2, HEIGHT // 2))
         self.speed = 5
-        self.angle = 0
+        self.angle = 90
         self.lives = 3
         self.bullet_speed = 10
         self.bullet_count = 1
@@ -44,8 +44,8 @@ class Spaceship(pygame.sprite.Sprite):
         if keys[pygame.K_RIGHT]:
             self.angle -= 5
         if keys[pygame.K_UP]:
-            self.rect.x -= self.speed * math.sin(math.radians(self.angle))
-            self.rect.y -= self.speed * math.cos(math.radians(self.angle))
+            self.rect.x += self.speed * math.cos(math.radians(self.angle))
+            self.rect.y -= self.speed * math.sin(math.radians(self.angle))
         if self.angle > 360:
             self.angle = 0
         if self.angle < 0:
@@ -58,8 +58,8 @@ class Spaceship(pygame.sprite.Sprite):
         bullets = []
         for direction in self.multi_directions:
             angle = self.angle + direction
-            tip_x = self.rect.centerx - (self.rect.height / 2) * math.sin(math.radians(angle))
-            tip_y = self.rect.centery - (self.rect.height / 2) * math.cos(math.radians(angle))
+            tip_x = self.rect.centerx + (self.rect.height / 2) * math.cos(math.radians(angle))
+            tip_y = self.rect.centery - (self.rect.height / 2) * math.sin(math.radians(angle))
             bullets.append(Bullet((tip_x, tip_y), angle, self.bullet_speed))
         return bullets
 
@@ -99,8 +99,8 @@ class Asteroid(pygame.sprite.Sprite):
         return shape
 
     def update(self):
-        self.rect.x -= self.speed * math.sin(math.radians(self.direction))
-        self.rect.y -= self.speed * math.cos(math.radians(self.direction))
+        self.rect.x += self.speed * math.cos(math.radians(self.direction))
+        self.rect.y -= self.speed * math.sin(math.radians(self.direction))
         if self.rect.right < 0:
             self.rect.left = WIDTH
         elif self.rect.left > WIDTH:
@@ -134,8 +134,8 @@ class Bullet(pygame.sprite.Sprite):
         self.angle = angle
 
     def update(self):
-        self.rect.x -= self.speed * math.sin(math.radians(self.angle))
-        self.rect.y -= self.speed * math.cos(math.radians(self.angle))
+        self.rect.x += self.speed * math.cos(math.radians(self.angle))
+        self.rect.y -= self.speed * math.sin(math.radians(self.angle))
         if not screen.get_rect().contains(self.rect):
             self.kill()
 
